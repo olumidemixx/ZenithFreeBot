@@ -153,7 +153,7 @@ class TopTraders:
         #repeatedAddresses = [address for address, count in self.addressFrequency.items() if count > 1]
 
         repeatedAddresses = {address: count for address, count in self.addressFrequency.items() if count > 1}
-        alladdresses = list(self.allAddresses)[-4:-1]
+        alladdresses = list(self.allAddresses)[:3]
 
         result = {key: 0 for key in alladdresses}
         return result
