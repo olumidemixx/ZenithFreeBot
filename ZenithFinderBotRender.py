@@ -1,3 +1,4 @@
+
 import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -136,6 +137,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not check_user_eligibility(user_id):
         await update.message.reply_text("Sorry, you are not eligible to use this bot.")
         return
+    await update.message.reply_text("Join t.me/Smart_Money_Buy to get alpha calls by Zenith Bot")
+    await update.message.reply_text("Use @GMGN_smartmoney_bot or Cielo to filter the wallets based on winrate and Pnls")
     
     checker = bot_manager.get_or_create_checker(user_id)
     if not checker.is_running:
@@ -171,7 +174,7 @@ async def process_list_command(update: Update, addresses: List[str]):
             await update.message.reply_text("No common addresses found between these tokens.")
             return
             
-        result_message = "\n\n"
+        result_message = "Here are the top 3 traders for the token \n\n"
         for addr, count in results.items():
             if addr and count is not None:
                 result_message += f"`{addr}`\n\n"
@@ -198,7 +201,7 @@ async def process_list_command_th(update: Update, addresses: List[str]):
             await update.message.reply_text("No common addresses found between these tokens.")
             return
             
-        result_message = "\n\n"
+        result_message = "Here are the top 3 holders for the token\n\n"
         for addr, count in results.items():
             if addr and count is not None:
                 result_message += f"`{addr}`\n\n"
