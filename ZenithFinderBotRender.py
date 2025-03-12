@@ -1,4 +1,3 @@
-
 import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -6,6 +5,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 import asyncio
 from typing import List, Set, Dict
 import time
+import os
 from concurrent.futures import ThreadPoolExecutor
 from toptradersbysellsAndUnrealizedPSKipFirst100000Orso import topTraders,earlyBuyers,topHolders
 #from unrealizedANDrealizedTopTraders import topTraders
@@ -16,7 +16,6 @@ import logging
 import re
 import sys
 import time
-import os
 import time
 from datetime import datetime, timedelta
 
@@ -139,6 +138,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await update.message.reply_text("Join t.me/Smart_Money_Buy to get alpha calls by Zenith Bot")
     await update.message.reply_text("Use @GMGN_smartmoney_bot or Cielo to filter the wallets based on winrate and Pnls")
+
     
     checker = bot_manager.get_or_create_checker(user_id)
     if not checker.is_running:
@@ -174,7 +174,7 @@ async def process_list_command(update: Update, addresses: List[str]):
             await update.message.reply_text("No common addresses found between these tokens.")
             return
             
-        result_message = "Here are the top 3 traders for the token \n\n"
+        result_message = "Here are the top 3 traders \n\n"
         for addr, count in results.items():
             if addr and count is not None:
                 result_message += f"`{addr}`\n\n"
@@ -201,7 +201,7 @@ async def process_list_command_th(update: Update, addresses: List[str]):
             await update.message.reply_text("No common addresses found between these tokens.")
             return
             
-        result_message = "Here are the top 3 holders for the token\n\n"
+        result_message = "Here are the top3 holders\n\n"
         for addr, count in results.items():
             if addr and count is not None:
                 result_message += f"`{addr}`\n\n"
@@ -393,22 +393,25 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     help_text = """This is all you need to know to use the bot:
 
-There are Three commands: /start /list /help
-
-Although /list comes in different formats e.g /list1, /list2 etc.
-
-To use any /list format, use 2 - 10 tokens
+There are 4 commands: /start /th /tt /help
 
 For instance:
-/list 8FqXr6dw5NHA2TtwFeDz6q9p7y9uWyoEdZmpXqqUpump, 7mHCx9iXPJ7EJDbDAUGmej39Kme8cxZfeVi1EAvEpump
+/tt 8FqXr6dw5NHA2TtwFeDz6q9p7y9uWyoEdZmpXqqUpump
 
-Each token should be separated by a comma and a space afterwards.
+/tt is great for finding smart traders and insiders
+/th is great for finding smart whales
 
-I'll advise you input between 8 - 10 tokens to get the common addresses between them
 
-You can then use tools like Gmgn website/bot, Cielo and so on to check the winrate and other qualities of these common addresses"""
+You can then use tools like Gmgn website/bot, Cielo and so on to check the winrate and other qualities of these common addresses
+
+Contact @TheGroovyMate to test the Vip bot  and follow him on Twitter at: https://x.com/Groovy_mate
+"""
     
     await update.message.reply_text(help_text)
+    
+    await update.message.reply_text("Join t.me/Smart_Money_Buy to get alpha calls by Zenith Bot")
+    await update.message.reply_text("Use @GMGN_smartmoney_bot or Cielo to filter the wallets based on winrate and Pnls")
+
     
 # Home page handler
 async def home_page(request):
