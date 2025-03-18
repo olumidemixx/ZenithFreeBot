@@ -1,11 +1,11 @@
 import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
+import os 
 
 import asyncio
 from typing import List, Set, Dict
 import time
-import os
 from concurrent.futures import ThreadPoolExecutor
 from toptradersbysellsAndUnrealizedPSKipFirst100000Orso import topTraders,earlyBuyers,topHolders
 #from unrealizedANDrealizedTopTraders import topTraders
@@ -32,12 +32,7 @@ ELIGIBLE_USER_IDS = [6364570277, 8160840495, 987654321]
 thread_pool = ThreadPoolExecutor(max_workers=10)  # Limit concurrent operations
 # Add this at the top level of your module, with your other imports
 get_results = ""  # Initialize with empty string
-timer = 0
-timer_users = {}
-count_tt = 0
-count_th = 0
-user_counters_th = {}
-user_counters_tt = {}
+
 
 
 def check_user_eligibility(user_id: int) -> bool:
@@ -245,42 +240,18 @@ async def process_list_command_ea(update: Update, addresses: List[str]):
 
 
 
-async def tt(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def stt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if not check_user_eligibility(user_id):
         await update.message.reply_text("Sorry, you are not eligible to use this bot.")
         return
     
-    current_time = datetime.now()
-    
-    # Initialize or check if reset needed
-    if user_id not in user_counters_tt:
-        user_counters_tt[user_id] = {
-            "count": 0,
-            "last_reset": current_time
-        }
-    else:
-        # Check if 24 hours have passed since last reset
-        last_reset = user_counters_tt[user_id]["last_reset"]
-        if current_time - last_reset >= timedelta(hours=18):
-            # Reset counter if 24 hours have passed
-            user_counters_tt[user_id]["count"] = 0
-            user_counters_tt[user_id]["last_reset"] = current_time
-    
-    # Increment the user's counter
-    user_counters_tt[user_id]["count"] += 1
-    
-    # Log and check if limit reached
-    logging.info(f"User {user_id} count: {user_counters_tt[user_id]['count']}")
-    if user_counters_tt[user_id]["count"] > 7:
-        await update.message.reply_text("You have only 7 chances in a day\nCome back in the next 24 hours")
-        return
     
         
     
     # Extract command name to handle different list variants
     command = update.message.text.split()[0].lower()
-    list_variant = command.replace('/tt', '')  # Will be empty for /list or have a number for /list1, /list2, etc.
+    list_variant = command.replace('/stt', '')  # Will be empty for /list or have a number for /list1, /list2, etc.
     
     text = update.message.text.replace(command, '').strip()
     addresses = [addr.strip() for addr in text.split(',') if addr.strip()]
@@ -315,41 +286,18 @@ async def get_result(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-async def th(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def sth(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if not check_user_eligibility(user_id):
         await update.message.reply_text("Sorry, you are not eligible to use this bot.")
         return
     
-    current_time = datetime.now()
-    
-    # Initialize or check if reset needed
-    if user_id not in user_counters_th:
-        user_counters_th[user_id] = {
-            "count": 0,
-            "last_reset": current_time
-        }
-    else:
-        # Check if 24 hours have passed since last reset
-        last_reset = user_counters_th[user_id]["last_reset"]
-        if current_time - last_reset >= timedelta(hours=18):
-            # Reset counter if 24 hours have passed
-            user_counters_th[user_id]["count"] = 0
-            user_counters_th[user_id]["last_reset"] = current_time
-    
-    # Increment the user's counter
-    user_counters_th[user_id]["count"] += 1
-    
-    # Log and check if limit reached
-    logging.info(f"User {user_id} count: {user_counters_th[user_id]['count']}")
-    if user_counters_th[user_id]["count"] > 7:
-        await update.message.reply_text("You have only 7 chances in a day\nCome back in the next 24 hours")
-        return
+
     
 
     # Extract command name to handle different list variants
     command = update.message.text.split()[0].lower()
-    list_variant = command.replace('/th', '')  # Will be empty for /list or have a number for /list1, /list2, etc.
+    list_variant = command.replace('/sth', '')  # Will be empty for /list or have a number for /list1, /list2, etc.
     
     text = update.message.text.replace(command, '').strip()
     addresses = [addr.strip() for addr in text.split(',') if addr.strip()]
@@ -393,13 +341,13 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     help_text = """This is all you need to know to use the bot:
 
-There are 4 commands: /start /th /tt /help
+There are 4 commands: /start /sth /stt /help
 
 For instance:
-/tt 8FqXr6dw5NHA2TtwFeDz6q9p7y9uWyoEdZmpXqqUpump
+/stt 8FqXr6dw5NHA2TtwFeDz6q9p7y9uWyoEdZmpXqqUpump
 
-/tt is great for finding smart traders and insiders
-/th is great for finding smart whales
+/stt is great for finding smart traders and insiders
+/sth is great for finding smart whales
 
 
 You can then use tools like Gmgn website/bot, Cielo and so on to check the winrate and other qualities of these common addresses
@@ -537,8 +485,8 @@ def main():
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("stop", stop))
-    application.add_handler(CommandHandler(["tt", "tt1", "tt2", "tt3", "tt4", "tt5"], tt))
-    application.add_handler(CommandHandler(["th", "th1", "th2", "th3", "th4", "th5"], th))
+    application.add_handler(CommandHandler(["stt", "stt1", "stt2", "stt3", "stt4", "stt5"], stt))
+    application.add_handler(CommandHandler(["sth", "sth1", "sth2", "sth3", "sth4", "sth5"], sth))
     application.add_handler(CommandHandler(["ea", "ea1", "ea2", "ea3", "ea4", "ea5"], ea))
     application.add_handler(CommandHandler("help", help))
     application.add_handler(CommandHandler("get_result", get_result))
