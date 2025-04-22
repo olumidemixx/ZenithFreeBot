@@ -4,6 +4,7 @@ fake_useragent
 typing_extensions
 telegram 
 requests
+python-dotenv
 
 
 aiohttp
