@@ -20,7 +20,13 @@ import time
 from datetime import datetime, timedelta
 
 
-BOT_TOKEN = '7971111200:AAFXXq0qrlA_TTaotF-aAN98YEeTr8ZMRAU'
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Loads variables from .env
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+
 
 # Configure logging
 logging.basicConfig(
