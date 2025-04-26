@@ -2,7 +2,7 @@ import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 import os 
-
+from wallet_stats import wallet_stats
 import asyncio
 from typing import List, Set, Dict
 import time
@@ -289,6 +289,31 @@ async def get_result(update: Update, context: ContextTypes.DEFAULT_TYPE):
         send += address + "\n"
     await update.message.reply_text(send)
 
+async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    
+    user_id = update.effective_user.id
+    if not check_user_eligibility(user_id):
+        await update.message.reply_text("Sorry, you are not eligible to use this bot.")
+        return 
+    command = update.message.text.split()[0].lower()
+    list_variant = command.replace('/scan', '')  # Will be empty for /list or have a number for /list1, /list2, etc.
+    
+    text = update.message.text.replace(command, '').strip()
+    address = [addr.strip() for addr in text.split(',') if addr.strip()]
+    
+    send = ""
+    
+
+    if len(address) != 1:
+        await update.message.reply_text("Please provide only  1 address.")
+        return
+    
+    send += wallet_stats(address) + "\n\n"
+    
+    await update.message.reply_text(send)
+    
+
+
 
 
 
@@ -494,6 +519,8 @@ def main():
     application.add_handler(CommandHandler(["stt", "stt1", "stt2", "stt3", "stt4", "stt5"], stt))
     application.add_handler(CommandHandler(["sth", "sth1", "sth2", "sth3", "sth4", "sth5"], sth))
     application.add_handler(CommandHandler(["ea", "ea1", "ea2", "ea3", "ea4", "ea5"], ea))
+    application.add_handler(CommandHandler(["scan", "scan1", "scan2", "scan3", "scan4", "scan5"], scan))
+    
     application.add_handler(CommandHandler("help", help))
     application.add_handler(CommandHandler("get_result", get_result))
 
